@@ -6,13 +6,13 @@
         "url": "=https://www.bitovi.com/blog/page/{{ $json.page }}",
         "options": {}
       },
-      "id": "d0b09464-b8b7-4ed3-9f1a-27a18f996b79",
+      "id": "441eef8d-65aa-423a-9212-7eb404c85051",
       "name": "Fetch Blog Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2320,
-        1420
+        480,
+        140
       ]
     },
     {
@@ -30,26 +30,26 @@
         },
         "options": {}
       },
-      "id": "623deb77-e0bc-4f6c-9af6-dc9d74687418",
+      "id": "19e4c4fb-f597-4201-9473-be04f2fb33c1",
       "name": "Extract Blog Post Content",
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        2540,
-        1420
+        700,
+        140
       ]
     },
     {
       "parameters": {
         "jsCode": "let allPosts = [];\nitems.forEach(item => {\n    if (item.json.blogPosts) {\n        allPosts = allPosts.concat(item.json.blogPosts);\n    }\n});\nreturn allPosts.map(post => ({ json: { post } }));"
       },
-      "id": "4aafe1d8-48f0-4887-bea3-c804d487d431",
+      "id": "0c19ea11-2ab8-44ab-ae2c-713551968357",
       "name": "Aggregate Blog Posts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2760,
-        1420
+        920,
+        140
       ]
     },
     {
@@ -57,13 +57,13 @@
         "language": "python",
         "pythonCode": "import re\nfrom bs4 import BeautifulSoup\n\ndef clean_text(text):\n    return re.sub(r'\\s+', ' ', text).strip()\n\nposts = []\n\nfor i, item in enumerate(items):\n    html = item[\"json\"][\"post\"]\n    soup = BeautifulSoup(html, \"html.parser\")\n\n    # Extract the link from the <a> tag with class \"w-full\"\n    link_tag = soup.find(\"a\", class_=\"w-full\")\n    link = link_tag[\"href\"] if link_tag and link_tag.has_attr(\"href\") else \"\"\n    \n    # Title extraction: assuming the title is within the first <p> tag inside the blog-tile-content div.\n    content = soup.find(\"div\", class_=\"blog-tile-content\")\n    title_tag = content.find(\"p\") if content else None\n    title = clean_text(title_tag.get_text()) if title_tag else \"\"\n\n    # Extract the date and time from the <time> element.\n    time_tag = soup.find(\"time\")\n    dateTime = time_tag[\"datetime\"] if time_tag and time_tag.has_attr(\"datetime\") else \"\"\n    dateDisplayed = clean_text(time_tag.get_text()) if time_tag else \"\"\n\n    # Extract the category: look for an <a> tag with a class starting with \"text-category-\"\n    category_tag = soup.find(\"a\", class_=lambda c: c and c.startswith(\"text-category-\"))\n    category = clean_text(category_tag.get_text()) if category_tag else \"\"\n\n    # Extract the summary from the 'blog-content-summary' div.\n    summary_tag = soup.find(\"div\", class_=\"blog-content-summary\")\n    summary = clean_text(summary_tag.get_text()) if summary_tag else \"\"\n\n    # Extract the author: assume it's inside a <p> with class including \"font-bold\" within blog-tile-author-info.\n    author_tag = soup.find(\"div\", class_=\"blog-tile-author-info\")\n    author = \"\"\n    if author_tag:\n        bold_tag = author_tag.find(\"p\", class_=lambda c: c and \"font-bold\" in c)\n        author = clean_text(bold_tag.get_text()) if bold_tag else \"\"\n\n    # Add the parsed post details to our list.\n    post = {\n        \"link\": link,\n        \"title\": title,\n        \"date\": dateDisplayed,\n        \"category\": category,\n        \"summary\": summary,\n        \"author\": author\n    }\n    posts.append(post)\n\n# Return the posts as a list under the 'posts' key.\nreturn [{\"json\": post} for post in posts]"
       },
-      "id": "45e8fee6-8ac8-4865-aa42-3a9b81f2f21b",
+      "id": "bca02bb3-7264-4325-b741-3c0edea53e51",
       "name": "Parse Blog Post Details",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2980,
-        1420
+        1140,
+        140
       ]
     },
     {
@@ -80,10 +80,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.1,
       "position": [
-        3440,
-        1720
+        1600,
+        440
       ],
-      "id": "8107e68a-7563-491f-8564-bd70a14c48f4",
+      "id": "0bd59659-4e81-4d2b-a1e7-4d05a96c7318",
       "name": "Qdrant Vector Store",
       "credentials": {
         "qdrantApi": {
@@ -130,10 +130,10 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1,
       "position": [
-        3560,
-        1920
+        1720,
+        640
       ],
-      "id": "f765c701-5fd6-4313-8068-36283cad0449",
+      "id": "5c7237cf-a23c-40e9-af96-69473e97862a",
       "name": "Default Data Loader"
     },
     {
@@ -144,10 +144,10 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        3680,
-        2080
+        1840,
+        800
       ],
-      "id": "c56da232-fcc5-46c7-a0e4-4efae6e60c83",
+      "id": "b7f1fde5-144a-495b-96de-5f1ced107e0e",
       "name": "Recursive Character Text Splitter"
     },
     {
@@ -158,10 +158,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
       "position": [
-        2080,
-        2540
+        240,
+        1260
       ],
-      "id": "f96a3a15-6b65-4771-bb0f-c9931f8bc0e3",
+      "id": "48228df0-c799-4303-b6ed-5798edf88c22",
       "name": "OpenRouter Chat Model",
       "credentials": {
         "openRouterApi": {
@@ -177,10 +177,10 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
       "position": [
-        1880,
-        2320
+        40,
+        1040
       ],
-      "id": "d28eb088-fc75-4677-9c8e-542e392ef49b",
+      "id": "0cc003dc-d299-417a-bf56-f6f29116f1bb",
       "name": "When chat message received",
       "webhookId": "a22b7b8d-cffd-4025-9b47-39d42b5a0ac2"
     },
@@ -192,11 +192,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1840,
-        1280
+        0,
+        0
       ],
       "typeVersion": 1,
-      "id": "c2f57da2-4897-4421-8f09-d411eef64a6b",
+      "id": "62b17e5b-097c-405f-aa52-39430d198e56",
       "name": "Sticky Note"
     },
     {
@@ -208,11 +208,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1840,
-        2260
+        0,
+        980
       ],
       "typeVersion": 1,
-      "id": "33e72f0b-c645-45c8-a136-8d33f9295855",
+      "id": "cc736878-967e-47f6-9b33-cab8f2b4f830",
       "name": "Sticky Note2"
     },
     {
@@ -227,10 +227,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        1920,
-        2540
+        80,
+        1260
       ],
-      "id": "1196ad9e-e2bd-4b0b-a0ed-142472090ef0",
+      "id": "2b988bd9-858d-48ae-a5f8-5b8b0e5aff43",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -244,10 +244,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        1880,
-        1360
+        40,
+        80
       ],
-      "id": "61116b2f-3f38-4d9d-94d0-e886051f0442",
+      "id": "da808ea5-f8c8-4877-b5c8-cd64dfb1b073",
       "name": "When clicking ‘Test workflow’"
     },
     {
@@ -255,23 +255,23 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        2220,
-        2540
+        380,
+        1260
       ],
-      "id": "40560166-06a7-49f7-a90b-a0a7622c26d8",
+      "id": "090b45f1-df30-4507-822f-bea9d5a546a1",
       "name": "Simple Memory"
     },
     {
       "parameters": {
         "jsCode": "const totalPages = 40;\nconst outputItems = [];\nfor (let i = 1; i <= totalPages; i++) {\n    outputItems.push({ json: { page: i } });\n}\nreturn outputItems;"
       },
-      "id": "287f115e-d02e-4f5b-983b-2abfcac52cb2",
+      "id": "6b3e2dd2-1fb8-42fd-9d25-0bde8dbb1937",
       "name": "Page Numbers",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2100,
-        1420
+        260,
+        140
       ]
     },
     {
@@ -284,10 +284,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.1,
       "position": [
-        3200,
-        1520
+        1360,
+        240
       ],
-      "id": "f56469a5-8c16-496c-91e2-9bbe4a17664a",
+      "id": "e9e18cf0-664b-4b31-8fff-3bdb10622576",
       "name": "Append Unique Blog Posts"
     },
     {
@@ -301,10 +301,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        1880,
-        1660
+        40,
+        380
       ],
-      "id": "77159dc5-844d-4fbb-b4df-e33e772cd2d5",
+      "id": "5040dd86-a83f-4d44-b4cf-850b8c0445b5",
       "name": "Schedule Trigger"
     },
     {
@@ -316,10 +316,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2100,
-        1620
+        260,
+        340
       ],
-      "id": "8bc0c5e7-25d4-4990-8ee0-baf75bac937b",
+      "id": "5c81cc94-8ff5-4a2b-8fd1-37874593562c",
       "name": "Retrieve Existing Data",
       "credentials": {
         "postgres": {
@@ -362,7 +362,8 @@
               "defaultMatch": true,
               "display": true,
               "type": "number",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": true,
+              "removed": true
             },
             {
               "id": "link",
@@ -427,10 +428,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        3560,
-        1320
+        1720,
+        40
       ],
-      "id": "62dcebc0-6014-4e27-9084-1c19f62ec206",
+      "id": "928b7d88-47aa-4323-8056-356d56c77150",
       "name": "Store Blog Post Data",
       "credentials": {
         "postgres": {
@@ -455,10 +456,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.1,
       "position": [
-        2360,
-        2540
+        520,
+        1260
       ],
-      "id": "7dd9ef98-bc82-43d8-b940-05ffa0bffa3a",
+      "id": "6ad129bd-c28e-4651-ae1f-685bc65e61c2",
       "name": "Qdrant Vector Store Retriever",
       "credentials": {
         "qdrantApi": {
@@ -476,10 +477,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.8,
       "position": [
-        2200,
-        2320
+        360,
+        1040
       ],
-      "id": "d29c331a-014f-431f-8f33-f8897bc2a0a6",
+      "id": "5b25b052-277e-47b4-914b-0e1d2f796ad1",
       "name": "Bitovi Blog AI Agent"
     },
     {
@@ -490,10 +491,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        3420,
-        1940
+        1580,
+        660
       ],
-      "id": "465cc466-ade4-44ee-8c5e-35498733155b",
+      "id": "806885cd-aa49-4655-a5d9-3d2d061bfe45",
       "name": "Vector Store Embeddings",
       "credentials": {
         "huggingFaceApi": {
@@ -510,10 +511,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        2440,
-        2700
+        600,
+        1420
       ],
-      "id": "20c39112-49ad-4498-a39c-d2d9e0c8195b",
+      "id": "e6a3bdb8-5195-4bcd-b4c9-e336e1b98a93",
       "name": "Vector Embeddings",
       "credentials": {
         "huggingFaceApi": {
@@ -531,11 +532,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1860,
-        1820
+        20,
+        540
       ],
       "typeVersion": 1,
-      "id": "3fe8297b-f8c5-44ef-b62f-24c6dbd15273",
+      "id": "00ef2074-e392-41cd-9772-0eb321fbad2b",
       "name": "Sticky Note1"
     },
     {
@@ -547,11 +548,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        2400,
-        1760
+        560,
+        480
       ],
       "typeVersion": 1,
-      "id": "6cd16500-1d32-4a27-8a3e-3b625c48e569",
+      "id": "207ae6b3-d916-4fbc-abe2-c132fcdd9c8c",
       "name": "Sticky Note3"
     },
     {
@@ -563,11 +564,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3740,
-        1480
+        1900,
+        200
       ],
       "typeVersion": 1,
-      "id": "8d87a629-c146-4ffd-9303-ac2a057a12ee",
+      "id": "7e6788b8-337b-4e7d-955d-d3e126a7d416",
       "name": "Sticky Note4"
     },
     {
@@ -579,11 +580,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        2820,
-        2280
+        980,
+        1000
       ],
       "typeVersion": 1,
-      "id": "aabef188-046c-48eb-82cd-824033e4dcf1",
+      "id": "c75a21f1-3cc1-4129-a804-9ff54593e2b5",
       "name": "Sticky Note5"
     },
     {
@@ -606,10 +607,10 @@
       "type": "n8n-nodes-base.postgresTool",
       "typeVersion": 2.6,
       "position": [
-        2660,
-        2540
+        820,
+        1260
       ],
-      "id": "96828559-f7af-4915-ae02-ba3ca0d07385",
+      "id": "355acbfb-7dbc-48c4-9e84-ed926ac6a1d3",
       "name": "PostgreSQL Retriever",
       "credentials": {
         "postgres": {
@@ -839,10 +840,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "b5fae047-6eb4-4a2d-bb79-a4ceeef247ef",
+  "versionId": "a79face4-521a-48ce-9455-5d422e883f61",
   "meta": {
     "instanceId": "707a31f3eb37353ab42be5888c9dcfdbb022b9c0218330b644d569cb37a9c914"
   },
-  "id": "BzWgyzpBdKW2INma",
+  "id": "KMrsyKYGutJXRXO5",
   "tags": []
 }
