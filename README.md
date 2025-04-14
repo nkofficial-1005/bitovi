@@ -22,25 +22,19 @@ Start the docker-compose service by running:
     docker-compose up --build
 
 #### postgres (Network Configuration Note):
+This ensures that n8n and PostgreSQL (pg-n8n) are configured on the same network and running correctly for our workflow. Run the following commands:
 ```bash
+docker network create shared-network
 docker-compose up -d
+docker network connect shared-network n8n-getting-started-n8n-1
+docker network inspect shared-network
 ```
-If n8n and postgres (pg-n8n) are not detected on the same network, run the following commands:
-
-    docker network create shared-network
-    docker network connect shared-network n8n-getting-started-n8n-1
-    docker network inspect shared-network
-
 *(Ensure that both containers appear on the same network when inspected.)*
 
 ### Step 3: Setup PostgreSQL
 Open the PostgreSQL SQL editor:
 
     docker exec -it pg-n8n psql -U n8n -d n8n
-
-Check existing relations:
-
-    \dt
 
 Create the `blog_posts` table:
 
