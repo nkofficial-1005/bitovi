@@ -23,7 +23,7 @@ Start the docker-compose service by running:
 
 #### postgres (Network Configuration Note):
 ```bash
-    docker-compose up -d
+docker-compose up -d
 ```
 If n8n and postgres (pg-n8n) are not detected on the same network, run the following commands:
 
