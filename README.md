@@ -81,7 +81,7 @@ Add credentials or API keys for Hugging Face, OpenAI, or OpenRouter.
     Qdrant URL: http://host.docker.internal:6333/
 
 ### Step 8: Test the Workflow
-Trigger the workflow (scheduled to run every midnight) by clicking **Test Workflow** in n8n. Confirm that blog post data and embeddings are stored in PostgreSQL and Qdrant, respectively.
+Trigger the workflow (scheduled to run every midnight) by clicking **Test Workflow** in n8n. The blog post data and embeddings should now be stored in PostgreSQL and Qdrant, respectively.
 
 ### Step 9: Use the RAG AI Agent
-The RAG AI Agent is now ready to accept prompts and generate answers.
+The RAG AI Agent is now ready to accept prompts and generate answers. 🎉
