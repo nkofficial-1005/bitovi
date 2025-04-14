@@ -834,13 +834,18 @@
           }
         ]
       ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "2c4c73cf-f378-4546-aada-7a965bcfff9e",
+  "versionId": "a8d93da8-f7c5-41b0-aef7-99353932e3bb",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "707a31f3eb37353ab42be5888c9dcfdbb022b9c0218330b644d569cb37a9c914"
