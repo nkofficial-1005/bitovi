@@ -12,7 +12,7 @@ This workflow shows how to set up and run the created **Bitovi Blog AI Agent**.
 ### Step 1: Clone the Repository
 Clone the repository using:
 
-    git clone <repository_url>
+    git clone https://github.com/nkofficial-1005/bitovi.git
 
 ### Step 2: Run Containers
 
@@ -22,9 +22,11 @@ Start the docker-compose service by running:
     docker-compose up --build
 
 #### postgres (Network Configuration Note):
+```bash
+    docker-compose up -d
+```
 If n8n and postgres (pg-n8n) are not detected on the same network, run the following commands:
 
-    docker-compose up -d
     docker network create shared-network
     docker network connect shared-network n8n-getting-started-n8n-1
     docker network inspect shared-network
