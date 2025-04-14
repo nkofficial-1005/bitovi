@@ -1,18 +1,18 @@
 {
-  "name": "Bitovi Blog AI Agent",
+  "name": "My workflow",
   "nodes": [
     {
       "parameters": {
         "url": "=https://www.bitovi.com/blog/page/{{ $json.page }}",
         "options": {}
       },
-      "id": "36e61a51-f3ca-4fd0-bded-5fa977587fd0",
+      "id": "d0b09464-b8b7-4ed3-9f1a-27a18f996b79",
       "name": "Fetch Blog Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        480,
-        200
+        2320,
+        1420
       ]
     },
     {
@@ -30,26 +30,26 @@
         },
         "options": {}
       },
-      "id": "16984819-2d40-4f81-a7f7-2a6117e7600d",
+      "id": "623deb77-e0bc-4f6c-9af6-dc9d74687418",
       "name": "Extract Blog Post Content",
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        700,
-        200
+        2540,
+        1420
       ]
     },
     {
       "parameters": {
         "jsCode": "let allPosts = [];\nitems.forEach(item => {\n    if (item.json.blogPosts) {\n        allPosts = allPosts.concat(item.json.blogPosts);\n    }\n});\nreturn allPosts.map(post => ({ json: { post } }));"
       },
-      "id": "d8b5d211-9d7b-41ae-9df6-dc56de2991d3",
+      "id": "4aafe1d8-48f0-4887-bea3-c804d487d431",
       "name": "Aggregate Blog Posts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        920,
-        200
+        2760,
+        1420
       ]
     },
     {
@@ -57,13 +57,13 @@
         "language": "python",
         "pythonCode": "import re\nfrom bs4 import BeautifulSoup\n\ndef clean_text(text):\n    return re.sub(r'\\s+', ' ', text).strip()\n\nposts = []\n\nfor i, item in enumerate(items):\n    html = item[\"json\"][\"post\"]\n    soup = BeautifulSoup(html, \"html.parser\")\n\n    # Extract the link from the <a> tag with class \"w-full\"\n    link_tag = soup.find(\"a\", class_=\"w-full\")\n    link = link_tag[\"href\"] if link_tag and link_tag.has_attr(\"href\") else \"\"\n    \n    # Title extraction: assuming the title is within the first <p> tag inside the blog-tile-content div.\n    content = soup.find(\"div\", class_=\"blog-tile-content\")\n    title_tag = content.find(\"p\") if content else None\n    title = clean_text(title_tag.get_text()) if title_tag else \"\"\n\n    # Extract the date and time from the <time> element.\n    time_tag = soup.find(\"time\")\n    dateTime = time_tag[\"datetime\"] if time_tag and time_tag.has_attr(\"datetime\") else \"\"\n    dateDisplayed = clean_text(time_tag.get_text()) if time_tag else \"\"\n\n    # Extract the category: look for an <a> tag with a class starting with \"text-category-\"\n    category_tag = soup.find(\"a\", class_=lambda c: c and c.startswith(\"text-category-\"))\n    category = clean_text(category_tag.get_text()) if category_tag else \"\"\n\n    # Extract the summary from the 'blog-content-summary' div.\n    summary_tag = soup.find(\"div\", class_=\"blog-content-summary\")\n    summary = clean_text(summary_tag.get_text()) if summary_tag else \"\"\n\n    # Extract the author: assume it's inside a <p> with class including \"font-bold\" within blog-tile-author-info.\n    author_tag = soup.find(\"div\", class_=\"blog-tile-author-info\")\n    author = \"\"\n    if author_tag:\n        bold_tag = author_tag.find(\"p\", class_=lambda c: c and \"font-bold\" in c)\n        author = clean_text(bold_tag.get_text()) if bold_tag else \"\"\n\n    # Add the parsed post details to our list.\n    post = {\n        \"link\": link,\n        \"title\": title,\n        \"date\": dateDisplayed,\n        \"category\": category,\n        \"summary\": summary,\n        \"author\": author\n    }\n    posts.append(post)\n\n# Return the posts as a list under the 'posts' key.\nreturn [{\"json\": post} for post in posts]"
       },
-      "id": "a7348201-8477-429a-a346-f4eeee222d3a",
+      "id": "45e8fee6-8ac8-4865-aa42-3a9b81f2f21b",
       "name": "Parse Blog Post Details",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1140,
-        200
+        2980,
+        1420
       ]
     },
     {
@@ -80,10 +80,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.1,
       "position": [
-        1600,
-        500
+        3440,
+        1720
       ],
-      "id": "c9d3e14e-2f56-4566-b5cb-e8b5dc5633b3",
+      "id": "8107e68a-7563-491f-8564-bd70a14c48f4",
       "name": "Qdrant Vector Store",
       "credentials": {
         "qdrantApi": {
@@ -130,10 +130,10 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1,
       "position": [
-        1720,
-        700
+        3560,
+        1920
       ],
-      "id": "a5b6e00f-8738-4411-9e75-2c9203b7c7a6",
+      "id": "f765c701-5fd6-4313-8068-36283cad0449",
       "name": "Default Data Loader"
     },
     {
@@ -144,10 +144,10 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        1840,
-        860
+        3680,
+        2080
       ],
-      "id": "fedff786-36f8-43c4-9877-f3e2a59a015b",
+      "id": "c56da232-fcc5-46c7-a0e4-4efae6e60c83",
       "name": "Recursive Character Text Splitter"
     },
     {
@@ -158,10 +158,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
       "position": [
-        240,
-        1320
+        2080,
+        2540
       ],
-      "id": "9c4ad64e-55f8-47f1-8365-dbfdd8e5b880",
+      "id": "f96a3a15-6b65-4771-bb0f-c9931f8bc0e3",
       "name": "OpenRouter Chat Model",
       "credentials": {
         "openRouterApi": {
@@ -177,10 +177,10 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
       "position": [
-        40,
-        1100
+        1880,
+        2320
       ],
-      "id": "5b5dc230-8525-4c92-bcef-8571e7a0b453",
+      "id": "d28eb088-fc75-4677-9c8e-542e392ef49b",
       "name": "When chat message received",
       "webhookId": "a22b7b8d-cffd-4025-9b47-39d42b5a0ac2"
     },
@@ -192,11 +192,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        0,
-        60
+        1840,
+        1280
       ],
       "typeVersion": 1,
-      "id": "d6fbf06a-e543-4556-8187-627881b39e8c",
+      "id": "c2f57da2-4897-4421-8f09-d411eef64a6b",
       "name": "Sticky Note"
     },
     {
@@ -208,11 +208,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        0,
-        1040
+        1840,
+        2260
       ],
       "typeVersion": 1,
-      "id": "1300d217-3b6f-4f98-87af-326366f70179",
+      "id": "33e72f0b-c645-45c8-a136-8d33f9295855",
       "name": "Sticky Note2"
     },
     {
@@ -227,10 +227,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        80,
-        1320
+        1920,
+        2540
       ],
-      "id": "3a4f7989-17d9-43f3-b405-dfb00345891d",
+      "id": "1196ad9e-e2bd-4b0b-a0ed-142472090ef0",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -244,10 +244,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        40,
-        140
+        1880,
+        1360
       ],
-      "id": "7e22d345-53da-4586-b131-9a75b3314584",
+      "id": "61116b2f-3f38-4d9d-94d0-e886051f0442",
       "name": "When clicking ‘Test workflow’"
     },
     {
@@ -255,23 +255,23 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        380,
-        1320
+        2220,
+        2540
       ],
-      "id": "79ed41ef-1376-4a43-9172-033aa124b203",
+      "id": "40560166-06a7-49f7-a90b-a0a7622c26d8",
       "name": "Simple Memory"
     },
     {
       "parameters": {
         "jsCode": "const totalPages = 40;\nconst outputItems = [];\nfor (let i = 1; i <= totalPages; i++) {\n    outputItems.push({ json: { page: i } });\n}\nreturn outputItems;"
       },
-      "id": "e2366ebf-7a4f-48ac-83bd-e7a15ca9209f",
+      "id": "287f115e-d02e-4f5b-983b-2abfcac52cb2",
       "name": "Page Numbers",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        260,
-        200
+        2100,
+        1420
       ]
     },
     {
@@ -284,10 +284,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.1,
       "position": [
-        1360,
-        300
+        3200,
+        1520
       ],
-      "id": "a6d503bf-ff45-4093-a67c-69f2397f3f1f",
+      "id": "f56469a5-8c16-496c-91e2-9bbe4a17664a",
       "name": "Append Unique Blog Posts"
     },
     {
@@ -301,10 +301,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        40,
-        440
+        1880,
+        1660
       ],
-      "id": "75b25e47-d819-443b-ba58-9332f5b81bab",
+      "id": "77159dc5-844d-4fbb-b4df-e33e772cd2d5",
       "name": "Schedule Trigger"
     },
     {
@@ -316,10 +316,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        260,
-        400
+        2100,
+        1620
       ],
-      "id": "74ff8a81-3bfe-4d63-867c-ed8025089199",
+      "id": "8bc0c5e7-25d4-4990-8ee0-baf75bac937b",
       "name": "Retrieve Existing Data",
       "credentials": {
         "postgres": {
@@ -349,8 +349,7 @@
             "date": "={{ $json.date }}",
             "category": "={{ $json.category }}",
             "summary": "={{ $json.summary }}",
-            "author": "={{ $json.author }}",
-            "id": 0
+            "author": "={{ $json.author }}"
           },
           "matchingColumns": [
             "id"
@@ -428,10 +427,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1720,
-        100
+        3560,
+        1320
       ],
-      "id": "1d4decb5-c57d-4d37-bb52-779b93a4ab8f",
+      "id": "62dcebc0-6014-4e27-9084-1c19f62ec206",
       "name": "Store Blog Post Data",
       "credentials": {
         "postgres": {
@@ -456,10 +455,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
       "typeVersion": 1.1,
       "position": [
-        520,
-        1320
+        2360,
+        2540
       ],
-      "id": "ff328e68-6b31-40d4-aa98-81e745dfd82d",
+      "id": "7dd9ef98-bc82-43d8-b940-05ffa0bffa3a",
       "name": "Qdrant Vector Store Retriever",
       "credentials": {
         "qdrantApi": {
@@ -471,16 +470,16 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "=You are a helpful AI assistant answering questions about Bitovi’s blog articles. You have access to two retrieval tools:\n   1. A Vector Store Embeddings retriever that provides semantically relevant blog excerpts using following {context}.\n   2. A PostgreSQL retriever that can perform structured queries on the blog_posts database (with columns: id, link, title, dateTime, dateDisplayed, category, summary, and author).\n\nWhen a user submits a query, analyze its intent carefully:\n   - If the query includes keywords or phrases indicating metadata filtering or ordering (such as \"latest\", \"by category\", \"by author\", or specific dates), use the PostgreSQL retriever to fetch the most accurate results based on the blog_posts metadata.\n   - Otherwise, or if the query is more open-ended, rely on the context provided by the Vector Store Embeddings retriever for semantic similarity.\n\nAlways base your final answer only on the content retrieved from these tools, and integrate any relevant metadata (like date, category, author, and title) to improve the response. Make sure to provide the corresponding link of the article for each answer. If neither source provides relevant context, reply with \"I couldn’t find relevant information in the blog articles.\"\n\nYour task is to understand the user's query, select the appropriate retrieval method (or combine them when needed), and then answer the query using the retrieved blog content."
+          "systemMessage": "=You are a helpful AI assistant answering questions about Bitovi’s blog articles. You have access to two retrieval tools:\n   1. A Vector Store Embeddings retriever that provides semantically relevant blog excerpts using following {context}.\n   2. A PostgreSQL retriever that can perform structured queries on the blog_posts database (with columns: id, link, title, date, category, summary, and author).\n\nWhen a user submits a query, analyze its intent carefully:\n   - If the query includes keywords or phrases indicating metadata filtering or ordering (such as \"latest\", \"by category\", \"by author\", or specific dates), use the PostgreSQL retriever to fetch the most accurate results based on the blog_posts metadata.\n   - Otherwise, or if the query is more open-ended, rely on the context provided by the Vector Store Embeddings retriever for semantic similarity.\n\nAlways base your final answer only on the content retrieved from these tools, and integrate any relevant metadata (like date, category, author, and title) to improve the response. Make sure to provide the corresponding link of the article for each answer. If neither source provides relevant context, reply with \"I couldn’t find relevant information in the blog articles.\"\n\nYour task is to understand the user's query, select the appropriate retrieval method (or combine them when needed), and then answer the query using the retrieved blog content."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.8,
       "position": [
-        360,
-        1100
+        2200,
+        2320
       ],
-      "id": "871cbf1a-cf76-4104-9d16-21676b7e2ad2",
+      "id": "d29c331a-014f-431f-8f33-f8897bc2a0a6",
       "name": "Bitovi Blog AI Agent"
     },
     {
@@ -491,10 +490,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        1580,
-        720
+        3420,
+        1940
       ],
-      "id": "4c84c816-612d-4699-bac1-081d2f5a95d4",
+      "id": "465cc466-ade4-44ee-8c5e-35498733155b",
       "name": "Vector Store Embeddings",
       "credentials": {
         "huggingFaceApi": {
@@ -511,10 +510,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        600,
-        1480
+        2440,
+        2700
       ],
-      "id": "19c5a143-7437-4eb2-8eec-4110b700e53d",
+      "id": "20c39112-49ad-4498-a39c-d2d9e0c8195b",
       "name": "Vector Embeddings",
       "credentials": {
         "huggingFaceApi": {
@@ -532,11 +531,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        20,
-        600
+        1860,
+        1820
       ],
       "typeVersion": 1,
-      "id": "8e856495-9711-4b59-96bd-fae34e24a2e0",
+      "id": "3fe8297b-f8c5-44ef-b62f-24c6dbd15273",
       "name": "Sticky Note1"
     },
     {
@@ -548,11 +547,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        560,
-        540
+        2400,
+        1760
       ],
       "typeVersion": 1,
-      "id": "430d22aa-5f31-407d-a864-a9b7a1111b96",
+      "id": "6cd16500-1d32-4a27-8a3e-3b625c48e569",
       "name": "Sticky Note3"
     },
     {
@@ -564,11 +563,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1900,
-        260
+        3740,
+        1480
       ],
       "typeVersion": 1,
-      "id": "3f66d893-0925-4989-b633-e1b92cac61b7",
+      "id": "8d87a629-c146-4ffd-9303-ac2a057a12ee",
       "name": "Sticky Note4"
     },
     {
@@ -580,11 +579,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        980,
-        1060
+        2820,
+        2280
       ],
       "typeVersion": 1,
-      "id": "83e98658-7d03-439a-8222-5f4606b9bf94",
+      "id": "aabef188-046c-48eb-82cd-824033e4dcf1",
       "name": "Sticky Note5"
     },
     {
@@ -607,10 +606,10 @@
       "type": "n8n-nodes-base.postgresTool",
       "typeVersion": 2.6,
       "position": [
-        820,
-        1320
+        2660,
+        2540
       ],
-      "id": "245e1603-90e5-4d81-8236-b4008c168333",
+      "id": "96828559-f7af-4915-ae02-ba3ca0d07385",
       "name": "PostgreSQL Retriever",
       "credentials": {
         "postgres": {
@@ -834,22 +833,16 @@
           }
         ]
       ]
-    },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        []
-      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "a8d93da8-f7c5-41b0-aef7-99353932e3bb",
+  "versionId": "b5fae047-6eb4-4a2d-bb79-a4ceeef247ef",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "707a31f3eb37353ab42be5888c9dcfdbb022b9c0218330b644d569cb37a9c914"
   },
-  "id": "Td3lunA6ewQMfiZb",
+  "id": "BzWgyzpBdKW2INma",
   "tags": []
 }
