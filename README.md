@@ -32,7 +32,7 @@ docker network inspect shared-network
 *(Ensure that both containers appear on the same network when inspected.)*
 
 ### Step 3: Setup PostgreSQL
-Open the PostgreSQL SQL editor:
+Open the PostgreSQL editor:
 
     docker exec -it pg-n8n psql -U n8n -d n8n
 
