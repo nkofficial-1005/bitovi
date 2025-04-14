@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  pg-n8n:
+    image: postgres:12
+    container_name: pg-n8n
+    restart: always
+    environment:
+      - POSTGRES_DB=n8n
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_n8n_data:/var/lib/postgresql/data
+    networks:
+      shared-network:
+        aliases:
+          - pg-n8n
+
+volumes:
+  pg_n8n_data:
+
+networks:
+  shared-network:
+    external: true
